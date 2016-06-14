@@ -200,7 +200,7 @@ zh-CN:
       product:
         name: "名称"
         image_url: "图片链接"
-        description: "商品品描述"
+        description: "商品描述"
         price: "价格"
         unit: "单位"
         hot: "热门商品"
