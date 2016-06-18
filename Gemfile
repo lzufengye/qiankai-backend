@@ -37,6 +37,7 @@ gem 'paperclip-av-transcoder'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'httparty'
 gem 'pingpp'
+gem 'spreadsheet'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views

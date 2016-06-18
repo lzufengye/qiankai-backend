@@ -232,6 +232,7 @@ GEM
       netrc (~> 0.7)
     rmagick (2.15.4)
     ruby-hmac (0.4.0)
+    ruby-ole (1.2.11.8)
     sass (3.4.21)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
@@ -246,6 +247,8 @@ GEM
       actionmailer (>= 3.2.6, < 5)
       actionpack (>= 3.2.6, < 5)
       devise (~> 3.2)
+    spreadsheet (1.0.4)
+      ruby-ole (>= 1.0)
     spring (1.6.4)
     sprockets (3.5.2)
       concurrent-ruby (~> 1.0)
@@ -308,6 +311,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   simple_token_authentication
+  spreadsheet
   spring
   therubyracer
   turbolinks

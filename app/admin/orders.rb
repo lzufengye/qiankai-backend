@@ -46,4 +46,36 @@ ActiveAdmin.register Order do
   filter :products
   filter :customers
   filter :deleted
+
+  sidebar :export do
+    link_to '<button type="button">导出订单</button>'.html_safe, export_order_admin_orders_path
+  end
+
+  collection_action :export_order, method: :get do
+    order_list = Spreadsheet::Workbook.new
+    sheet = order_list.create_worksheet name: 'Sheet-1'
+
+    header = ['订单号', '购买详情', '消费者', '配送地址', '支付状态', '处理状态', '总价', '运费', '备注', '创建时间']
+
+    sheet.insert_row(0, header)
+
+    orders = Order.includes(:address).includes(:consumer).includes(:line_items).includes(:products).includes(:customers).where(deleted: false).order('created_at DESC')
+
+    orders.each do |order|
+      order_detail = order.line_items.map do |line_item|
+         "#{line_item.try(:product).try(:customer).try(:name)} - #{line_item.try(:product).try(:customer).try(:phone)}: #{line_item.try(:product).try(:name)} X #{line_item.quantity}, "
+      end.reduce('+')
+
+      consumer = order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?
+
+      new_row_index = sheet.last_row_index + 1
+      row = [order.sn, order_detail, consumer, order.address.try(:human_read_address), order.state, order.handle_state, order.total_price, order.ship_fee, order.comment, order.created_at]
+      sheet.insert_row(new_row_index, row)
+    end
+
+    spreadsheet = StringIO.new
+    order_list.write spreadsheet
+    send_data spreadsheet.string, :filename => "orders-#{Time.now.strftime('%F')}.xls", :type =>  "application/vnd.ms-excel"
+  end
+
 end
