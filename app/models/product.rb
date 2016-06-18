@@ -25,6 +25,7 @@
 #  free_ship                   :boolean          default(FALSE), not null
 #  on_sale                     :boolean          default(TRUE), not null
 #  display_order               :integer          default(0), not null
+#  cash_on_delivery            :string(255)
 #
 
 class Product < ActiveRecord::Base

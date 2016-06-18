@@ -1,7 +1,7 @@
 ActiveAdmin.register Product do
   menu parent:'开街商城'
 
-  permit_params :display_order, :stock_number, :name, :image_url, :description, :free_ship, :price, :unit, :link, :on_sale, :product_detail, :customer_id, :service, tag_ids: [],
+  permit_params :cash_on_delivery, :display_order, :stock_number, :name, :image_url, :description, :free_ship, :price, :unit, :link, :on_sale, :product_detail, :customer_id, :service, tag_ids: [],
                 product_images_attributes: [:id, :image, :_destroy], product_details_attributes: [:id, :image, :_destroy],
                 services_attributes: [:id, :image, :_destroy], skus_attributes: [:id, :name, :price]
 
@@ -16,7 +16,7 @@ ActiveAdmin.register Product do
     column :on_sale
     column :stock_number
     column :display_order
-    column :created_at
+    column :cash_on_delivery
     actions
   end
 
@@ -30,6 +30,7 @@ ActiveAdmin.register Product do
   filter :tags
   filter :stock_number
   filter :display_order
+  filter :cash_on_delivery
   filter :created_at
 
   form do |f|
@@ -41,6 +42,7 @@ ActiveAdmin.register Product do
       f.input :free_ship
       f.input :on_sale
       f.input :stock_number
+      f.input :cash_on_delivery, as: :select, collection: [ ['仅支持货到付款', '仅支持货到付款'], ['支持货到付款', '支持货到付款'], ['不支持货到付款', '不支持货到付款'] ]
 
       f.inputs '标签' do
         TagCategory.all.each do |tag_category|
