@@ -206,6 +206,7 @@ zh-CN:
         hot: "热门商品"
         on_sale: "是否上架"
         stock_number: "库存"
+        sold_number: "销量"
         display_order: "显示顺序"
         tags: "标签"
         customer: "商家"

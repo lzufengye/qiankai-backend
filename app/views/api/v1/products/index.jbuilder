@@ -13,6 +13,7 @@ json.products @products do |product|
   json.unit product.unit
   json.free_ship product.free_ship
   json.stock_number product.stock_number
+  json.sold_number product.sold_number
   json.display_order product.display_order
   json.cash_on_delivery product.cash_on_delivery
 end
