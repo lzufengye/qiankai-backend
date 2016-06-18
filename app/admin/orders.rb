@@ -4,7 +4,6 @@ ActiveAdmin.register Order do
 
   index do
     selectable_column
-    column :id
     column :sn
     column :line_items do |order|
       order.line_items.map{|line_item| "#{line_item.try(:product).try(:name)} X #{line_item.quantity}, "}.reduce('+')
@@ -21,9 +20,10 @@ ActiveAdmin.register Order do
     column :state
     column :handle_state
     column :total_price
-    column :ship_fee
+    # column :ship_fee
     column :comment
     column :deleted
+    column :created_at
     actions
   end
 
