@@ -25,7 +25,8 @@
 #  free_ship                   :boolean          default(FALSE), not null
 #  on_sale                     :boolean          default(TRUE), not null
 #  display_order               :integer          default(0), not null
-#  cash_on_delivery            :string(255)
+#  cash_on_delivery            :string(255)      default("支持货到付款"), not null
+#  sold_number                 :integer          default(0), not null
 #
 
 class Product < ActiveRecord::Base
