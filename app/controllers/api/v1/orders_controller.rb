@@ -34,6 +34,10 @@ class Api::V1::OrdersController < ApiController
     if(@order.state == '未支付')
       @order.update_attributes(deleted: true)
       @message = "成功删除订单#{@order.sn}"
+
+      @order.line_items.each do |line_item|
+        line_item.product.add_stock_number(line_item.quantity)
+      end
     else
       @message = '该订单已支付，无法删除'
     end
@@ -51,6 +55,7 @@ class Api::V1::OrdersController < ApiController
     line_items = order_params[:products].map do |item|
       quantity = item[:quantity]
       product = Product.find(item[:id].to_i)
+      product.reduce_stock_number(quantity)
 
       unit_price = item[:sku_id] ? (sku = Sku.find(item[:sku_id].to_i)).price : product.price
 
@@ -95,9 +100,9 @@ class Api::V1::OrdersController < ApiController
       product = Product.find(item[:id])
       if item[:sku_id]
         sku = Sku.find(item[:sku_id])
-        raise UnprocessableEntityException, 'Sku不存在' unless sku.product_id == product.id
+        raise UnprocessableEntityException, "产品#{item[:id]}的Sku #{item[:sku_id]} 不存在" unless sku.product_id == product.id
       end
-      raise UnprocessableEntityException, '库存不足' if product.stock_number && product.stock_number < item[:quantity]
+      raise UnprocessableEntityException, "产品#{item[:id]}库存不足" if product.stock_number && product.stock_number < item[:quantity]
     end
   end
 

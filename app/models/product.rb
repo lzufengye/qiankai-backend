@@ -66,4 +66,23 @@ class Product < ActiveRecord::Base
   def set_display_order
     self.update_attributes!(display_order: self.id) if self.display_order == nil || self.display_order == 0
   end
+
+  def reduce_stock_number(quantity)
+    unless stock_number
+      self.update_attributes!(sold_number: sold_number + quantity)
+    else
+      real_sold_number = quantity > stock_number ? stock_number : quantity
+      self.update_attributes!(stock_number: stock_number - real_sold_number, sold_number: sold_number + real_sold_number)
+    end
+  end
+
+  def add_stock_number(quantity)
+    reduce_sold_number = sold_number > quantity ? quantity : sold_number
+
+    unless stock_number
+      self.update_attributes!(sold_number: (sold_number - reduce_sold_number))
+    else
+      self.update_attributes!(stock_number: stock_number + reduce_sold_number, sold_number: sold_number -  reduce_sold_number)
+    end
+  end
 end
