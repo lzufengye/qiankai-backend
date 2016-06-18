@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160618082534) do
+ActiveRecord::Schema.define(version: 20160618093113) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "title",      limit: 255
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20160618082534) do
     t.string   "unit",                        limit: 255
     t.integer  "stock_number",                limit: 4
     t.boolean  "free_ship",                   limit: 1,   default: false,    null: false
-    t.boolean  "on_sale",                     limit: 1,   default: true,     null: false
+    t.boolean  "on_sale",                     limit: 1,   default: false,    null: false
     t.integer  "display_order",               limit: 4,   default: 0,        null: false
     t.string   "cash_on_delivery",            limit: 255, default: "支持货到付款", null: false
     t.integer  "sold_number",                 limit: 4,   default: 0,        null: false

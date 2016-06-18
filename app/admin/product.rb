@@ -42,9 +42,16 @@ ActiveAdmin.register Product do
       f.input :price
       f.input :unit
       f.input :free_ship
-      f.input :on_sale
+      if current_admin_user.admin?
+        f.input :on_sale
+      end
       f.input :stock_number
-      f.input :sold_number
+      if current_admin_user.admin?
+        f.input :sold_number
+      end
+      if current_admin_user.admin?
+        f.input :display_order
+      end
       f.input :cash_on_delivery, as: :select, collection: [ ['仅支持货到付款', '仅支持货到付款'], ['支持货到付款', '支持货到付款'], ['不支持货到付款', '不支持货到付款'] ]
 
       f.inputs '标签' do
@@ -52,8 +59,6 @@ ActiveAdmin.register Product do
           f.input :tags, as: :check_boxes, collection: tag_category.tags, label: "-- #{tag_category.name}"
         end
       end
-
-      f.input :display_order
       if current_admin_user.admin?
         f.input :customer, as: :select, collection: Customer.all
       else
