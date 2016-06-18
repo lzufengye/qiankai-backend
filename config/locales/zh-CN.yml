@@ -213,6 +213,7 @@ zh-CN:
         product_detail: "商品详情"
         service: "售后服务"
         free_ship: "是否免运费"
+        cash_on_delivery: "货到付款方式"
         created_at: "创建时间"
         updated_at: "更新时间"
       news:

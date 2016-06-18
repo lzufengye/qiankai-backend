@@ -7,6 +7,7 @@ json.product do
   json.price @product.price
   json.unit @product.unit
   json.stock_number @product.stock_number
+  json.cash_on_delivery @product.cash_on_delivery
   json.free_ship @product.free_ship
   json.sold_amount 121
   json.comments ["好产品", "经久耐用"]

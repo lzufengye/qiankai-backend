@@ -9,6 +9,10 @@ json.orders @orders do |order|
   json.invoice_title order.invoice_title
   json.payment_method_id order.payment_method_id
   json.payment_method_name order.payment_method_name
+  json.logistical do
+    json.name order.logistical
+    json.number order.logistical_number
+  end
   json.created_at order.created_at.strftime('%Y-%m-%d')
 
   json.line_items order.line_items do |line_item|
