@@ -4,6 +4,29 @@ json._links do
   end
 end
 
+json._links do
+  json.self do
+    json.href "/api/v1/products?page=#{@products.current_page}"
+  end
+
+  json.first do
+    json.href "/api/v1/products?page=1"
+  end
+
+  json.prev do
+    unless @products.first_page?
+      json.href "/api/v1/products?page=#{@products.prev_page}"
+    end
+  end
+
+  json.next do
+    unless @products.last_page?
+      json.href "/api/v1/products?page=#{@products.next_page}"
+    end
+  end
+end
+
+
 json.products @products do |product|
   json.id product.id
   json.name product.name
