@@ -30,4 +30,5 @@ class Order < ActiveRecord::Base
   belongs_to :consumer
   belongs_to :address
   belongs_to :payment_method
+  belongs_to :customer
 end

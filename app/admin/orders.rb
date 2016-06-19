@@ -9,7 +9,8 @@ ActiveAdmin.register Order do
       order.line_items.map{|line_item| "#{line_item.try(:product).try(:name)} X #{line_item.quantity}, "}.reduce('+')
     end
     column '商家' do |order|
-      order.line_items.map{|line_item| "#{line_item.try(:product).try(:customer).try(:name)}: #{line_item.try(:product).try(:customer).try(:phone)},"}.reduce('+')
+      customers = order.line_items.map{|line_item| "#{line_item.try(:product).try(:customer).try(:name)}: #{line_item.try(:product).try(:customer).try(:phone)},"}.reduce('+')
+      order.customer ? (link_to order.customer.try(:name), admin_customer_path(order.customer)) : customers
     end
     column :consumer do |order|
       order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?

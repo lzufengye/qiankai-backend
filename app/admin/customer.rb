@@ -22,7 +22,7 @@ ActiveAdmin.register Customer do
 
   show do
     attributes_table do
-      row :nme
+      row :name
       row :description
       row :phone
     end

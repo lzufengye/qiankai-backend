@@ -20,4 +20,5 @@ class Customer < ActiveRecord::Base
   accepts_nested_attributes_for :admin_users, allow_destroy: true
 
   has_many :products
+  has_many :orders
 end
