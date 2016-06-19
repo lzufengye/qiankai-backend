@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160619040256) do
+ActiveRecord::Schema.define(version: 20160619082734) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "title",      limit: 255
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 20160619040256) do
     t.string   "refresh_token",          limit: 255
   end
 
-  add_index "consumers", ["authentication_token"], name: "index_consumers_on_authentication_token", using: :btree
+  add_index "consumers", ["authentication_token"], name: "index_consumers_on_authentication_token", length: {"authentication_token"=>191}, using: :btree
 
   create_table "create_spaces", force: :cascade do |t|
     t.text     "introduction", limit: 65535
@@ -276,12 +276,21 @@ ActiveRecord::Schema.define(version: 20160619040256) do
     t.datetime "updated_at",                   null: false
   end
 
+  create_table "shopping_carts", force: :cascade do |t|
+    t.integer  "consumer_id", limit: 4
+    t.integer  "product_id",  limit: 4
+    t.integer  "sku_id",      limit: 4
+    t.integer  "quantity",    limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "skus", force: :cascade do |t|
     t.string   "name",       limit: 255
     t.float    "price",      limit: 24
     t.integer  "product_id", limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tag_categories", force: :cascade do |t|
@@ -347,7 +356,7 @@ ActiveRecord::Schema.define(version: 20160619040256) do
     t.string   "role",                   limit: 255
   end
 
-  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", length: {"authentication_token"=>191}, using: :btree
 
   create_table "virtual_tourisms", force: :cascade do |t|
     t.string   "title",                   limit: 255

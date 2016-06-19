@@ -19,6 +19,7 @@
 #  invoice_title       :string(255)
 #  payment_method_id   :integer
 #  payment_method_name :string(255)
+#  customer_id         :integer
 #
 
 class Order < ActiveRecord::Base
