@@ -12,6 +12,7 @@ class Ability
         can :create, Product
         can :manage, AdminUser, id: user.id
         can :manage, LineItem, product: {customer_id: user.customer_id}
+        can :manage, Order, customer_id: user.customer_id
         cannot :destroy, AdminUser
         can :manage, Customer, id: user.customer_id
         cannot :destroy, Customer

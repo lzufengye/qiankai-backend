@@ -38,6 +38,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'httparty'
 gem 'pingpp'
 gem 'spreadsheet'
+gem 'faker'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
@@ -62,5 +63,4 @@ end
 
 group :test do
   gem 'database_rewinder'
-  gem 'faker'
 end
