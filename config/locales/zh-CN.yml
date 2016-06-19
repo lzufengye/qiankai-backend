@@ -121,6 +121,7 @@ zh-CN:
         updated_at: "更新时间"
         logistical: "物流公司"
         logistical_number: "物流编号"
+        sku_id: '品项'
       consumer:
         email: "邮箱"
         user_name: "用户名"

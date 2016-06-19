@@ -21,12 +21,57 @@ ActiveAdmin.register Order do
     column :state
     column :handle_state
     column :total_price
-    # column :ship_fee
     column :comment
     column :deleted
     column :created_at
     actions
   end
+
+  show do
+    attributes_table do
+      row :sn
+      row :consumer_id do
+        link_to order.consumer.try(:email), admin_consumer_path(order.consumer)
+      end
+      row :address_id do
+        link_to order.address.try(:human_read_address), admin_address_path(order.address)
+      end
+      row :state
+      row :handle_state
+      row :ship_fee
+      row :total_price
+      row :comment
+      row :invoice_title
+      row :payment_method_id
+      row :payment_method_name
+      row :logistical
+      row :logistical_number
+      row :deleted
+      row :customer_id do
+        customers = order.line_items.map{|line_item| "#{line_item.try(:product).try(:customer).try(:name)}: #{line_item.try(:product).try(:customer).try(:phone)},"}.reduce('+')
+        order.customer ? (link_to order.customer.try(:name), admin_customer_path(order.customer)) : customers
+      end
+      row :created_at
+      row :updated_at
+    end
+
+    panel('订单项详情') do
+      table_for(order.line_items) do
+        column :id do |line_item|
+          link_to line_item.id, admin_line_item_path(line_item)
+        end
+        column :product do |line_item|
+          line_item.product ? (link_to line_item.product.name, admin_product_path(line_item.product)) : ''
+        end
+        column :sku_id do |line_item|
+          line_item.sku.try(:name)
+        end
+        column :unit_price
+        column :quantity
+      end
+    end
+  end
+
 
   form do |f|
     f.inputs "订单详情" do
@@ -61,6 +106,8 @@ ActiveAdmin.register Order do
     sheet.insert_row(0, header)
 
     orders = Order.includes(:address).includes(:consumer).includes(:line_items).includes(:products).includes(:customers).where(deleted: false).order('created_at DESC')
+
+    orders = orders.where(customer_id: current_admin_user.customer_id)  unless current_admin_user.admin?
 
     orders.each do |order|
       order_detail = order.line_items.map do |line_item|

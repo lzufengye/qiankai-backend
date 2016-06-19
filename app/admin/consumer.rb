@@ -1,5 +1,5 @@
 ActiveAdmin.register Consumer do
-  actions :index
+  actions :index, :show
 
   index do
     selectable_column
@@ -9,6 +9,15 @@ ActiveAdmin.register Consumer do
     column :phone
     column :created_at
     actions
+  end
+
+  show do
+    attributes_table do
+      row :email
+      row :user_name
+      row :phone
+      row :created_at
+    end
   end
 
   filter :email
