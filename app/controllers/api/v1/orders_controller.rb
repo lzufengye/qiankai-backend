@@ -2,7 +2,10 @@ class Api::V1::OrdersController < ApiController
   before_action :authenticate_consumer_from_token!
   before_action :authenticate_consumer!
   before_action :validate_address, only: [:create]
+  before_action :construct_products_for_order, only: [:create]
+  before_action :construct_payment_method_for_order, only: [:create]
   before_action :validate_products, only: [:create]
+  before_action :validate_payment_method, only: [:create]
 
   def index
     if(params[:sn].present?)
@@ -52,7 +55,7 @@ class Api::V1::OrdersController < ApiController
   def create
     @orders = []
 
-    split_products_by_customer(order_params[:products]).each do |customer_id, products|
+    split_products_by_customer.each do |customer_id, products|
       order_total_price = 0
 
       order_line_items = products.map do |product|
@@ -63,8 +66,7 @@ class Api::V1::OrdersController < ApiController
         LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
       end
 
-      payment_method = PaymentMethod.find(order_params[:payment_method_id]) if order_params[:payment_method_id]
-      order = create_order(order_total_price, payment_method, order_line_items, customer_id)
+      order = create_order(order_total_price, order_line_items, customer_id)
       calculate_shipment_fee(order)
       @orders << order
     end
@@ -96,26 +98,15 @@ class Api::V1::OrdersController < ApiController
     raise UnauthorizedException unless address.try(:consumer_id) == current_consumer.id
   end
 
-  def validate_products
-    order_params[:products].each do |item|
-      product = Product.find(item[:id])
-      if item[:sku_id]
-        sku = Sku.find(item[:sku_id])
-        raise UnprocessableEntityException, "产品#{item[:id]}的Sku #{item[:sku_id]} 不存在" unless sku.product_id == product.id
-      end
-      raise UnprocessableEntityException, "产品#{item[:id]}库存不足" if product.stock_number && product.stock_number < item[:quantity]
-    end
-  end
-
-  def create_order(total_price, payment_method, line_items, customer_id)
+  def create_order(total_price, line_items, customer_id)
     order = Order.create(consumer_id: current_consumer.id,
                  address_id: order_params[:address_id],
                  comment: order_params[:comment],
                  invoice_title: order_params[:invoice_title],
                  total_price: total_price,
                  state: '未支付',
-                 payment_method_id: payment_method.try(:id),
-                 payment_method_name: payment_method.try(:name),
+                 payment_method_id: @payment_method.try(:id),
+                 payment_method_name: @payment_method.try(:name),
                  sn: "#{DateTime.now.to_i}#{rand(9999)}",
                  customer_id: customer_id)
     order.line_items << line_items
@@ -127,14 +118,36 @@ class Api::V1::OrdersController < ApiController
     order.update_attributes(ship_fee: shipment_fee)
   end
 
-  def split_products_by_customer(products_params)
-    products = products_params.map do |product_param|
+  def split_products_by_customer
+    @products_for_order.group_by(&:customer_id)
+  end
+
+
+  def construct_products_for_order
+    @products_for_order = order_params[:products].map do |product_param|
       product = Product.find(product_param[:id])
       product.quantity_for_order = product_param[:quantity]
       product.sku_id_for_order = product_param[:sku_id]
       product
     end
-    products.group_by(&:customer_id)
   end
 
+  def construct_payment_method_for_order
+    @payment_method = PaymentMethod.find(order_params[:payment_method_id]) if order_params[:payment_method_id]
+  end
+
+  def validate_products
+    @products_for_order.each do |product|
+      if product.sku_id_for_order
+        sku = Sku.find(product.sku_id_for_order)
+        raise UnprocessableEntityException, "产品#{product.id}的Sku #{product.sku_id_for_order} 不存在" unless sku.product_id == product.id
+      end
+      raise UnprocessableEntityException, "产品#{product.id}库存不足" if product.stock_number && product.stock_number < product.quantity_for_order
+    end
+  end
+
+  def validate_payment_method
+    payment_conflict = @payment_method && @products_for_order.select{|product| product.cash_on_delivery == '不支持货到付款'}.present? && @payment_method.try(:name) == '货到付款'
+    raise UnprocessableEntityException, "商品不支持货到付款" if payment_conflict
+  end
 end
