@@ -56,22 +56,33 @@ class Api::V1::OrdersController < ApiController
     @orders = []
 
     split_products_by_customer.each do |customer_id, products|
-      order_total_price = 0
 
-      order_line_items = products.map do |product|
-        quantity = product.quantity_for_order
-        product.reduce_stock_number(quantity)
-        unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
-        order_total_price += unit_price.to_f * quantity
-        LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
+      if(@payment_method && @payment_method.try(:name) != '货到付款')
+        only_cash_products = products.select{ |product| product.cash_on_delivery == '仅支持货到付款'}
+        products = products - only_cash_products
+        payment_method = PaymentMethod.find_by_name('货到付款')
+        create_orders_for_products(customer_id, only_cash_products, payment_method) if only_cash_products.present?
       end
 
-      order = create_order(order_total_price, order_line_items, customer_id)
-      calculate_shipment_fee(order)
-      @orders << order
+      create_orders_for_products(customer_id, products, @payment_method)
     end
 
     render :index, status: :created
+  end
+
+  def create_orders_for_products(customer_id, products, payment_method)
+    order_total_price = 0
+    order_line_items = products.map do |product|
+      quantity = product.quantity_for_order
+      product.reduce_stock_number(quantity)
+      unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
+      order_total_price += unit_price.to_f * quantity
+      LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
+    end
+
+    order = create_order(order_total_price, order_line_items, customer_id, payment_method)
+    calculate_shipment_fee(order)
+    @orders << order
   end
 
   private
@@ -98,15 +109,15 @@ class Api::V1::OrdersController < ApiController
     raise UnauthorizedException unless address.try(:consumer_id) == current_consumer.id
   end
 
-  def create_order(total_price, line_items, customer_id)
+  def create_order(total_price, line_items, customer_id, payment_method)
     order = Order.create(consumer_id: current_consumer.id,
                  address_id: order_params[:address_id],
                  comment: order_params[:comment],
                  invoice_title: order_params[:invoice_title],
                  total_price: total_price,
                  state: '未支付',
-                 payment_method_id: @payment_method.try(:id),
-                 payment_method_name: @payment_method.try(:name),
+                 payment_method_id: payment_method.try(:id),
+                 payment_method_name: payment_method.try(:name),
                  sn: "#{DateTime.now.to_i}#{rand(9999)}",
                  customer_id: customer_id)
     order.line_items << line_items
