@@ -68,7 +68,7 @@ class Api::V1::OrdersController < ApiController
     @order = create_order(total_price, payment_method, line_items)
     calculate_shipment_fee(@order)
 
-    render :show
+    render :show, status: :created
   end
 
   private
@@ -121,7 +121,7 @@ class Api::V1::OrdersController < ApiController
   end
 
   def calculate_shipment_fee(order)
-    shipment_fee = order.total_price > FreeShipmentCoupon.last.try(:min_price) ? 0 : ShipmentFeeService.calculate(order)
+    shipment_fee = FreeShipmentCoupon.last && (order.total_price > FreeShipmentCoupon.last.try(:min_price)) ? 0 : ShipmentFeeService.calculate(order)
     order.update_attributes(ship_fee: shipment_fee)
   end
 

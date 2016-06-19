@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 20160618093113) do
     t.string   "refresh_token",          limit: 255
   end
 
-  add_index "consumers", ["authentication_token"], name: "index_consumers_on_authentication_token", length: {"authentication_token"=>191}, using: :btree
+  add_index "consumers", ["authentication_token"], name: "index_consumers_on_authentication_token", using: :btree
 
   create_table "create_spaces", force: :cascade do |t|
     t.text     "introduction", limit: 65535
@@ -279,8 +279,8 @@ ActiveRecord::Schema.define(version: 20160618093113) do
     t.string   "name",       limit: 255
     t.float    "price",      limit: 24
     t.integer  "product_id", limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "tag_categories", force: :cascade do |t|
@@ -346,7 +346,7 @@ ActiveRecord::Schema.define(version: 20160618093113) do
     t.string   "role",                   limit: 255
   end
 
-  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", length: {"authentication_token"=>191}, using: :btree
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
 
   create_table "virtual_tourisms", force: :cascade do |t|
     t.string   "title",                   limit: 255
