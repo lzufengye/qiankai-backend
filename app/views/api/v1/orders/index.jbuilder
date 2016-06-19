@@ -1,5 +1,6 @@
 json.orders @orders do |order|
   json.sn order.sn
+  json.customer_id order.customer_id
   json.state order.state
   json.handle_state order.handle_state
   json.total_price order.total_price

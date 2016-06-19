@@ -50,25 +50,26 @@ class Api::V1::OrdersController < ApiController
   end
 
   def create
-    total_price = 0
+    @orders = []
 
-    line_items = order_params[:products].map do |item|
-      quantity = item[:quantity]
-      product = Product.find(item[:id].to_i)
-      product.reduce_stock_number(quantity)
+    split_products_by_customer(order_params[:products]).each do |customer_id, products|
+      order_total_price = 0
 
-      unit_price = item[:sku_id] ? (sku = Sku.find(item[:sku_id].to_i)).price : product.price
+      order_line_items = products.map do |product|
+        quantity = product.quantity_for_order
+        product.reduce_stock_number(quantity)
+        unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
+        order_total_price += unit_price.to_f * quantity
+        LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
+      end
 
-      total_price += unit_price.to_f * quantity
-      LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
+      payment_method = PaymentMethod.find(order_params[:payment_method_id]) if order_params[:payment_method_id]
+      order = create_order(order_total_price, payment_method, order_line_items, customer_id)
+      calculate_shipment_fee(order)
+      @orders << order
     end
 
-    payment_method = PaymentMethod.find(order_params[:payment_method_id]) if order_params[:payment_method_id]
-
-    @order = create_order(total_price, payment_method, line_items)
-    calculate_shipment_fee(@order)
-
-    render :show, status: :created
+    render :index, status: :created
   end
 
   private
@@ -106,7 +107,7 @@ class Api::V1::OrdersController < ApiController
     end
   end
 
-  def create_order(total_price, payment_method, line_items)
+  def create_order(total_price, payment_method, line_items, customer_id)
     order = Order.create(consumer_id: current_consumer.id,
                  address_id: order_params[:address_id],
                  comment: order_params[:comment],
@@ -115,7 +116,8 @@ class Api::V1::OrdersController < ApiController
                  state: '未支付',
                  payment_method_id: payment_method.try(:id),
                  payment_method_name: payment_method.try(:name),
-                 sn: "#{DateTime.now.to_i}#{rand(9999)}")
+                 sn: "#{DateTime.now.to_i}#{rand(9999)}",
+                 customer_id: customer_id)
     order.line_items << line_items
     order
   end
@@ -123,6 +125,16 @@ class Api::V1::OrdersController < ApiController
   def calculate_shipment_fee(order)
     shipment_fee = FreeShipmentCoupon.last && (order.total_price > FreeShipmentCoupon.last.try(:min_price)) ? 0 : ShipmentFeeService.calculate(order)
     order.update_attributes(ship_fee: shipment_fee)
+  end
+
+  def split_products_by_customer(products_params)
+    products = products_params.map do |product_param|
+      product = Product.find(product_param[:id])
+      product.quantity_for_order = product_param[:quantity]
+      product.sku_id_for_order = product_param[:sku_id]
+      product
+    end
+    products.group_by(&:customer_id)
   end
 
 end

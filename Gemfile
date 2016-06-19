@@ -62,4 +62,5 @@ end
 
 group :test do
   gem 'database_rewinder'
+  gem 'faker'
 end

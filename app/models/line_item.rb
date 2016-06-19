@@ -14,6 +14,7 @@
 #  logistical        :string(255)
 #  logistical_number :string(255)
 #  sku_id            :integer
+#  customer_id       :integer
 #
 
 class LineItem < ActiveRecord::Base

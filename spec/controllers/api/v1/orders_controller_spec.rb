@@ -2,8 +2,9 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::OrdersController do
 
-  let(:consumer) { FactoryGirl.create :consumer, :with_address }
-  let(:customer) { FactoryGirl.create :customer, :with_products }
+  let(:consumer) { FactoryGirl.create(:consumer, :with_address) }
+  let(:customer) { FactoryGirl.create(:customer, :with_products) }
+  let(:customer2) { FactoryGirl.create(:customer, :with_products) }
 
   describe '#create' do
     context 'with a consumer login token' do
@@ -16,6 +17,17 @@ RSpec.describe Api::V1::OrdersController do
           post :create, format: :json, order: {address_id: consumer.addresses[0].id, products: products}, token: token
         end.to change { Order.count }.by(1)
 
+        expect(response.status).to eq(201)
+      end
+
+      it 'should split orders by customer' do
+        products = (customer.products + customer2.products).map { |product| {id: product.id, quantity: 10} }
+
+        post :create, format: :json, order: {address_id: consumer.addresses[0].id, products: products}, token: token
+
+        expect(Order.count).to eq(2)
+        expect(Order.first.customer_id).to eq(customer.id)
+        expect(Order.last.customer_id).to eq(customer2.id)
         expect(response.status).to eq(201)
       end
     end
