@@ -5,6 +5,8 @@ ActiveAdmin.register Product do
                 product_images_attributes: [:id, :image, :_destroy], product_details_attributes: [:id, :image, :_destroy],
                 services_attributes: [:id, :image, :_destroy], skus_attributes: [:id, :name, :price]
 
+  actions :all, except: [:destroy]
+
   index do
     selectable_column
     id_column
