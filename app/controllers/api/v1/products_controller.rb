@@ -12,7 +12,7 @@ class Api::V1::ProductsController < ApiController
   end
 
   def search
-    products = Product.where("name like ?", "%#{params[:key_word]}%")
+    products = Product.where("name like ?", "%#{params[:key_word]}%").where(on_sale: true)
     @products = paginate products, per_page: params[:limit] || 10
     render :index
   end
