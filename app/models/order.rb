@@ -31,4 +31,8 @@ class Order < ActiveRecord::Base
   belongs_to :address
   belongs_to :payment_method
   belongs_to :customer
+
+  def need_to_be_charged
+    total_price.to_f + ship_fee.to_f
+  end
 end
