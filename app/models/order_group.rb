@@ -9,4 +9,7 @@
 #
 
 class OrderGroup < ActiveRecord::Base
+  def orders
+    order_sns.split(',').map(&:strip).map {|sn| Order.find_by_sn(sn)}
+  end
 end
