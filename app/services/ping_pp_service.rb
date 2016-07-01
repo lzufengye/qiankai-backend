@@ -31,7 +31,7 @@ class PingPPService
     total_amount = orders.map {|order| order.need_to_be_charged}.reduce(:+)
 
     Pingpp::Charge.create(
-        order_no: "order_group: #{order_group.id}",
+        order_no: "ORDERGROUP#{order_group.id}",
         amount: total_amount * 100,
         subject: '开街网订单',
         body: order_sns.to_json,

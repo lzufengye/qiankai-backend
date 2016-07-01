@@ -35,4 +35,8 @@ class Order < ActiveRecord::Base
   def need_to_be_charged
     total_price.to_f + ship_fee.to_f
   end
+
+  def paid?
+    state == '已支付'
+  end
 end

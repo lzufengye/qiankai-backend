@@ -44,6 +44,8 @@ Rails.application.routes.draw do
       resources :tag_categories, only: [:index]
       get  'search/:key_word', to: 'products#search'
       post 'oauth_sign_in', to: 'wechats#sign_in'
+
+      post 'transactions/charge', to: 'transactions#charge'
     end
   end
 end
