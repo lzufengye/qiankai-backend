@@ -18,6 +18,7 @@ ActiveAdmin.register Order do
     column :address do |order|
       link_to order.address.city_name, admin_address_path(order.address) if order.address.present?
     end
+    column :payment_method
     column :state
     column :handle_state
     column :total_price
@@ -86,6 +87,7 @@ ActiveAdmin.register Order do
   end
 
   filter :created_at
+  filter :payment_method
   filter :state
   filter :sn
   filter :handle_state

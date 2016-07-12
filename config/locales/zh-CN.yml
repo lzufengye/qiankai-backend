@@ -84,6 +84,7 @@ zh-CN:
         consumer_id: "用户"
         address: "配送地址"
         address_id: "配送地址"
+        payment_method: "支付方式"
         state: "支付状态"
         handle_state: "处理状态"
         sn: "订单号"
