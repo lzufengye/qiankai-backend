@@ -108,7 +108,7 @@ ActiveAdmin.register Order do
     order_list = Spreadsheet::Workbook.new
     sheet = order_list.create_worksheet name: 'Sheet-1'
 
-    header = ['订单号', '购买物品', '商家', '消费者', '配送地址', '支付方式', '支付状态', '处理状态', '总价', '运费', '备注', '创建时间']
+    header = ['订单号', '购买物品', '商家', '消费者', '顾客姓名', '联系电话', '收货地址', '支付方式', '支付状态', '处理状态', '总价', '运费', '备注', '创建时间']
 
     sheet.insert_row(0, header)
 
@@ -128,7 +128,7 @@ ActiveAdmin.register Order do
       consumer = order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?
 
       new_row_index = sheet.last_row_index + 1
-      row = [order.sn, order_detail, customers,  consumer, order.address.try(:human_read_address), order.payment_method.try(:name), order.state, order.handle_state, order.total_price, order.ship_fee, order.comment, order.created_at]
+      row = [order.sn, order_detail, customers,  consumer, order.address.try(:receiver), order.address.try(:phone), order.address.try(:receiver_address_detail), order.payment_method.try(:name), order.state, order.handle_state, order.total_price, order.ship_fee, order.comment, order.created_at]
       sheet.insert_row(new_row_index, row)
     end
 

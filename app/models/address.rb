@@ -24,4 +24,8 @@ class Address < ActiveRecord::Base
   def human_read_address
     "收件人:#{receiver}, 电话:#{phone}, 详细地址: #{address}, 城市: #{city_name || (city_id.present? ? City.find(city_id).try(:name) : '')}, 省份: #{province_name || (province_id.present? ? Province.find(province_id).try(:name) : '')}"
   end
+
+  def receiver_address_detail
+    "#{province_name || (province_id.present? ? Province.find(province_id).try(:name) : '')} #{city_name || (city_id.present? ? City.find(city_id).try(:name) : '')} #{address}"
+  end
 end
