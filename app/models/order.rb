@@ -32,6 +32,10 @@ class Order < ActiveRecord::Base
   belongs_to :payment_method
   belongs_to :customer
 
+  scope :alive, -> {
+            where(deleted: false)
+        }
+
   def need_to_be_charged
     total_price.to_f + ship_fee.to_f
   end
@@ -39,4 +43,5 @@ class Order < ActiveRecord::Base
   def paid?
     state == '已支付'
   end
+
 end

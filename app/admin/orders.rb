@@ -25,7 +25,6 @@ ActiveAdmin.register Order do
     column :handle_state
     column :total_price
     column :comment
-    column :deleted
     column :created_at
     actions
   end
@@ -49,7 +48,6 @@ ActiveAdmin.register Order do
       row :payment_method_name
       row :logistical
       row :logistical_number
-      row :deleted
       row :customer_id do
         customers = order.line_items.map{|line_item| "#{line_item.try(:product).try(:customer).try(:name)}: #{line_item.try(:product).try(:customer).try(:phone)},"}.reduce('+')
         order.customer ? (link_to order.customer.try(:name), admin_customer_path(order.customer)) : customers
@@ -96,7 +94,6 @@ ActiveAdmin.register Order do
   filter :products
   filter :customers
   filter :customer
-  filter :deleted
 
   sidebar :export do
     link_to '<button type="button">导出订单</button>'.html_safe, export_order_admin_orders_path
@@ -142,6 +139,10 @@ ActiveAdmin.register Order do
       session['filter'] = {}
       session['filter'] = params['q'] if params['controller'] == 'admin/orders' && params['commit'] == '过滤'
     end, only: :index
+
+    def scoped_collection
+      (super.includes :address, :consumer, :payment_method, :line_items, :products, :customers).where(deleted: false)
+    end
   end
 
 end
