@@ -2,6 +2,8 @@ ActiveAdmin.register Order do
   menu parent:'订单管理'
   permit_params :state, :handle_state, :logistical, :logistical_number, :total_price, :ship_fee, :comment, :invoice_title
 
+  actions :all, except: [:destroy]
+
   index do
     selectable_column
     column :sn
@@ -93,6 +95,7 @@ ActiveAdmin.register Order do
   filter :handle_state
   filter :products
   filter :customers
+  filter :customer
   filter :deleted
 
   sidebar :export do
@@ -100,6 +103,9 @@ ActiveAdmin.register Order do
   end
 
   collection_action :export_order, method: :get do
+
+    filter = Order.ransack(session['filter'])
+
     order_list = Spreadsheet::Workbook.new
     sheet = order_list.create_worksheet name: 'Sheet-1'
 
@@ -107,7 +113,7 @@ ActiveAdmin.register Order do
 
     sheet.insert_row(0, header)
 
-    orders = Order.includes(:address).includes(:consumer).includes(:line_items).includes(:products).includes(:customers).where(deleted: false).order('created_at DESC')
+    orders = filter.result.includes(:address).includes(:consumer).includes(:line_items).includes(:products).includes(:customers).where(deleted: false).order('created_at DESC')
 
     orders = orders.where(customer_id: current_admin_user.customer_id)  unless current_admin_user.admin?
 
@@ -126,6 +132,13 @@ ActiveAdmin.register Order do
     spreadsheet = StringIO.new
     order_list.write spreadsheet
     send_data spreadsheet.string, :filename => "orders-#{Time.now.strftime('%F')}.xls", :type =>  "application/vnd.ms-excel"
+  end
+
+  controller do
+    before_filter -> do
+      session['filter'] = {}
+      session['filter'] = params['q'] if params['controller'] == 'admin/orders' && params['commit'] == '过滤'
+    end, only: :index
   end
 
 end

@@ -2,6 +2,8 @@ ActiveAdmin.register LineItem do
   menu parent:'订单管理'
   permit_params :state, :handle_state, :logistical, :logistical_number, :unit_price
 
+  actions :all, except: [:destroy]
+
   index do
     selectable_column
     column :id
