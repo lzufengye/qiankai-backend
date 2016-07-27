@@ -2,7 +2,7 @@ ActiveAdmin.register Order do
   menu parent:'订单管理'
   permit_params :state, :handle_state, :logistical, :logistical_number, :total_price, :ship_fee, :comment, :invoice_title
 
-  actions :all, except: [:destroy]
+  actions :all, except: [:destroy, :new]
 
   index do
     selectable_column
@@ -80,7 +80,7 @@ ActiveAdmin.register Order do
       f.input :handle_state, as: :select, collection: ['未处理', '正在处理', '已发货', '已完成', '已收货']
       f.input :logistical
       f.input :logistical_number
-      f.input :total_price
+      # f.input :total_price
       f.input :ship_fee
     end
     f.actions

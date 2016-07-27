@@ -2,7 +2,7 @@ ActiveAdmin.register LineItem do
   menu parent:'订单管理'
   permit_params :state, :handle_state, :logistical, :logistical_number, :unit_price
 
-  actions :all, except: [:destroy]
+  actions :all, except: [:destroy, :new]
 
   index do
     selectable_column
@@ -39,7 +39,7 @@ ActiveAdmin.register LineItem do
       f.input :handle_state, as: :select, collection: ['未处理', '正在处理', '已发货', '已完成']
       f.input :logistical
       f.input :logistical_number
-      f.input :unit_price
+      # f.input :unit_price
     end
     f.actions
   end
