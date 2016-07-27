@@ -8,11 +8,12 @@ ActiveAdmin.register Order do
     selectable_column
     column :sn
     column :line_items do |order|
-      order.line_items.map{|line_item| "#{line_item.try(:product).try(:name)} X #{line_item.quantity}, "}.reduce('+')
+      # order.line_items.map{|line_item| "#{line_item.try(:product).try(:name)} X #{line_item.quantity}, "}.reduce('+')
+      order.line_items.group_by(&:customer).map{|customer, line_items| "#{customer.name}: #{line_items.map{|line_item| "#{line_item.try(:product).try(:name)} X #{line_item.quantity}, "}.reduce('+')}"}.reduce(&:+)
     end
     column '商家' do |order|
       customers = order.line_items.map{|line_item| "#{line_item.try(:product).try(:customer).try(:name)}: #{line_item.try(:product).try(:customer).try(:phone)},"}.reduce('+')
-      order.customer ? (link_to order.customer.try(:name), admin_customer_path(order.customer)) : customers
+      order.customer ? (link_to order.customer.try(:id), admin_customer_path(order.customer)) : customers
     end
     column :consumer do |order|
       order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?
@@ -25,7 +26,7 @@ ActiveAdmin.register Order do
     column :handle_state
     column :total_price
     column :comment
-    column :created_at
+    # column :created_at
     actions
   end
 
