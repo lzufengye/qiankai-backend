@@ -8,7 +8,7 @@ class Api::V1::OrdersController < ApiController
   before_action :validate_payment_method, only: [:create]
 
   def index
-    if(params[:sn].present?)
+    if (params[:sn].present?)
       @order = find_order_by_sn(params[:sn])
       return render :show
     end
@@ -24,17 +24,21 @@ class Api::V1::OrdersController < ApiController
   end
 
   def update_order_handle_state(order)
-    order.update_attributes(handle_state: order_update_params[:handle_state]) if order_update_params[:handle_state] == '已收货' && @order.state == '已支付'
+    ActiveRecord::Base.transaction do
+      order.update_attributes(handle_state: order_update_params[:handle_state]) if order_update_params[:handle_state] == '已收货' && @order.state == '已支付'
+    end
   end
 
   def update_order_state(order)
-    order.update_attributes(state: order_update_params[:state]) if order_update_params[:state] == '支付中' && @order.state == '未支付'
+    ActiveRecord::Base.transaction do
+      order.update_attributes(state: order_update_params[:state]) if order_update_params[:state] == '支付中' && @order.state == '未支付'
+    end
   end
 
   def destroy
     @order = find_order_by_sn(params[:id])
 
-    if(@order.state == '未支付')
+    if (@order.state == '未支付')
       @order.update_attributes(deleted: true)
       @message = "成功删除订单#{@order.sn}"
 
@@ -57,8 +61,8 @@ class Api::V1::OrdersController < ApiController
 
     split_products_by_customer.each do |customer_id, products|
 
-      if(@payment_method && @payment_method.try(:name) != '货到付款')
-        only_cash_products = products.select{ |product| product.cash_on_delivery == '仅支持货到付款'}
+      if (@payment_method && @payment_method.try(:name) != '货到付款')
+        only_cash_products = products.select { |product| product.cash_on_delivery == '仅支持货到付款' }
         products = products - only_cash_products
         payment_method = PaymentMethod.find_by_name('货到付款')
         create_orders_for_products(customer_id, only_cash_products, payment_method) if only_cash_products.present?
@@ -71,18 +75,20 @@ class Api::V1::OrdersController < ApiController
   end
 
   def create_orders_for_products(customer_id, products, payment_method)
-    order_total_price = 0
-    order_line_items = products.map do |product|
-      quantity = product.quantity_for_order
-      product.reduce_stock_number(quantity)
-      unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
-      order_total_price += unit_price.to_f * quantity
-      LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
-    end
+    ActiveRecord::Base.transaction do
+      order_total_price = 0
+      order_line_items = products.map do |product|
+        quantity = product.quantity_for_order
+        product.reduce_stock_number(quantity)
+        unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
+        order_total_price += unit_price.to_f * quantity
+        LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
+      end
 
-    order = create_order(order_total_price, order_line_items, customer_id, payment_method)
-    calculate_shipment_fee(order)
-    @orders << order
+      order = create_order(order_total_price, order_line_items, customer_id, payment_method)
+      calculate_shipment_fee(order)
+      @orders << order
+    end
   end
 
   private
@@ -111,15 +117,15 @@ class Api::V1::OrdersController < ApiController
 
   def create_order(total_price, line_items, customer_id, payment_method)
     order = Order.create(consumer_id: current_consumer.id,
-                 address_id: order_params[:address_id],
-                 comment: order_params[:comment],
-                 invoice_title: order_params[:invoice_title],
-                 total_price: total_price,
-                 state: '未支付',
-                 payment_method_id: payment_method.try(:id),
-                 payment_method_name: payment_method.try(:name),
-                 sn: "#{DateTime.now.to_i}#{rand(9999)}",
-                 customer_id: customer_id)
+                         address_id: order_params[:address_id],
+                         comment: order_params[:comment],
+                         invoice_title: order_params[:invoice_title],
+                         total_price: total_price,
+                         state: '未支付',
+                         payment_method_id: payment_method.try(:id),
+                         payment_method_name: payment_method.try(:name),
+                         sn: "#{DateTime.now.to_i}#{rand(9999)}",
+                         customer_id: customer_id)
     order.line_items << line_items
     order
   end
@@ -158,7 +164,8 @@ class Api::V1::OrdersController < ApiController
   end
 
   def validate_payment_method
-    payment_conflict = @payment_method && @products_for_order.select{|product| product.cash_on_delivery == '不支持货到付款'}.present? && @payment_method.try(:name) == '货到付款'
+    payment_conflict = @payment_method && @products_for_order.select { |product| product.cash_on_delivery == '不支持货到付款' }.present? && @payment_method.try(:name) == '货到付款'
     raise UnprocessableEntityException, "商品不支持货到付款" if payment_conflict
   end
+
 end

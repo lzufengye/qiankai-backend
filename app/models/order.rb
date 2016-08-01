@@ -32,6 +32,8 @@ class Order < ActiveRecord::Base
   belongs_to :payment_method
   belongs_to :customer
 
+  before_save :handle_total_price
+
   scope :alive, -> {
             where(deleted: false)
         }
@@ -42,6 +44,13 @@ class Order < ActiveRecord::Base
 
   def paid?
     state == '已支付'
+  end
+
+  private
+  def handle_total_price
+    if(self.line_items.present?)
+      self.total_price = self.line_items.map{|line_item| line_item.quantity*line_item.unit_price}.reduce(&:+)
+    end
   end
 
 end
