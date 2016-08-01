@@ -81,7 +81,7 @@ class Api::V1::OrdersController < ApiController
         quantity = product.quantity_for_order
         product.reduce_stock_number(quantity)
         unit_price = product.sku_id_for_order ? (sku = Sku.find(product.sku_id_for_order.to_i)).price : product.price
-        order_total_price += unit_price.to_f * quantity
+        order_total_price += (unit_price.to_f * quantity)
         LineItem.create(product_id: product.id, quantity: quantity, unit_price: unit_price.to_f, sku_id: sku.try(:id))
       end
 
