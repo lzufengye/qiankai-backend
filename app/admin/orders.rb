@@ -1,6 +1,6 @@
 ActiveAdmin.register Order do
   menu parent:'订单管理'
-  permit_params :state, :handle_state, :logistical, :logistical_number, :total_price, :ship_fee, :comment, :invoice_title
+  permit_params :state, :handle_state, :logistical, :logistical_number, :ship_fee, :comment, :invoice_title
 
   actions :all, except: [:destroy, :new]
 
