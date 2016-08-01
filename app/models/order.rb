@@ -49,7 +49,7 @@ class Order < ActiveRecord::Base
   private
   def handle_total_price
     if(self.line_items.present?)
-      self.total_price = self.line_items.map{|line_item| line_item.quantity*line_item.unit_price}.reduce(&:+)
+      self.total_price = (self.line_items.map{|line_item| line_item.quantity*line_item.unit_price}.reduce(&:+)).round(2)
     end
   end
 
