@@ -1,4 +1,5 @@
-json.customer @customer_name
+json.customer @customer.name
+json.phone @customer.phone
 
 json.products @products do |product|
   json.id product.id
