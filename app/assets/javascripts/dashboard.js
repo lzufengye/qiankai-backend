@@ -3,27 +3,25 @@ ActiveAdmin = {
 }
 
 ActiveAdmin.dashboard.index = function() {
+
   $('#users').highcharts({
     chart: {
-      type: 'column'
+      type: 'line'
     },
     title: {
-      text: 'My first Highcharts chart'
+      text: '注册用户数'
     },
     xAxis: {
-      categories: ['my', 'first', 'chart']
+      categories: $.map($("#users-data").data('registering'), function(data) {return data.date})
     },
     yAxis: {
       title: {
-        text: 'something'
+        text: '注册用户数'
       }
     },
     series: [{
-      name: 'Jane',
-      data: [1, 0, 4]
-    }, {
-      name: 'John',
-      data: [5, 7, 3]
-    }]
+      name: '月份',
+      data: $.map($("#users-data").data('registering'), function(data) {return data.count})
+   }]
   });
 }
