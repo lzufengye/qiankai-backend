@@ -51,4 +51,28 @@ ActiveAdmin.dashboard.index = function() {
       enabled: false
     }
   });
+
+  $('#products-chart').highcharts({
+    chart: {
+      type: 'line'
+    },
+    title: {
+      text: '上架商品'
+    },
+    xAxis: {
+      categories: $.map($("#products-chart-data").data('registering'), function(data) {return data.date})
+    },
+    yAxis: {
+      title: {
+        text: '上架商品数'
+      }
+    },
+    series: [{
+      name: '月份',
+      data: $.map($("#products-chart-data").data('registering'), function(data) {return data.count})
+    }],
+    exporting: {
+      enabled: false
+    }
+  })
 }

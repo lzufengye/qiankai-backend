@@ -33,6 +33,28 @@ ActiveAdmin.register_page "Dashboard" do
         end
       end
     end
+
+    columns do
+      column do
+        panel "上架商品" do
+          ul do
+            "总上架商品: #{Product.count}"
+          end
+          text_node %{<div id="products-chart" width="500" height="300"></div>}.html_safe
+          text_node %{<div id="products-chart-data" data-registering='#{ Product.all.group_by{ |t| t.created_at.beginning_of_month }.map {|key, products_by_month| {"date" => key.strftime('%Y-%m'), "count" => products_by_month.count}}.to_json}'></div>}.html_safe
+        end
+      end
+
+      column do
+        panel "入驻商家" do
+          ul do
+            "总入驻商家数: #{Customer.count}"
+          end
+          text_node %{<div id="customers-chart" width="500" height="300"></div>}.html_safe
+          text_node %{<div id="customers-chart-data" data-registering='#{ Customer.all.group_by{ |t| t.created_at.beginning_of_month }.map {|key, customers_by_month| {"date" => key.strftime('%Y-%m'), "count" => customers_by_month.count}}.to_json}'></div>}.html_safe
+        end
+      end
+    end
   end # content
 
   controller do
