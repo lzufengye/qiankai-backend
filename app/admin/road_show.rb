@@ -1,5 +1,5 @@
 # ActiveAdmin.register RoadShow do
-#   menu parent:'众创空间'
+#   menu parent:'开街创谷'
 #   permit_params :name, :text, :video_link
 #
 #   index do

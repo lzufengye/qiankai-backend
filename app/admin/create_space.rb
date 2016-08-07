@@ -1,5 +1,5 @@
 # ActiveAdmin.register CreateSpace do
-#   menu parent:'众创空间'
+#   menu parent:'开街创谷'
 #   permit_params :introduction, :policy, :support
 #
 #   index do
