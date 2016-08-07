@@ -14,18 +14,22 @@ ActiveAdmin.register_page "Dashboard" do
     #
     columns do
       column do
-        panel "注册用户数" do
+        panel "注册用户" do
           ul do
             "总注册用户: #{Consumer.count}"
           end
           text_node %{<div id="users" width="500" height="300"></div>}.html_safe
-          text_node %{<div id="users-data" data-registering='#{ Consumer.all.group_by{ |t| t.created_at.beginning_of_month }.map {|key, customers_by_month| {"date" => key.strftime('%Y-%m'), "count" => customers_by_month.count}}.to_json}'></div>}.html_safe
+          text_node %{<div id="users-data" data-registering='#{ Consumer.all.group_by{ |t| t.created_at.beginning_of_month }.map {|key, consumers_by_month| {"date" => key.strftime('%Y-%m'), "count" => consumers_by_month.count}}.to_json}'></div>}.html_safe
         end
       end
 
       column do
-        panel "Info" do
-          para "Welcome to ActiveAdmin."
+        panel "入驻商家" do
+          ul do
+            "总入驻商家数: #{Customer.count}"
+          end
+          text_node %{<div id="customers-chart" width="500" height="300"></div>}.html_safe
+          text_node %{<div id="customers-chart-data" data-registering='#{ Customer.all.group_by{ |t| t.created_at.beginning_of_month }.map {|key, customers_by_month| {"date" => key.strftime('%Y-%m'), "count" => customers_by_month.count}}.to_json}'></div>}.html_safe
         end
       end
     end
