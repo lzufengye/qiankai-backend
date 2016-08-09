@@ -38,6 +38,22 @@ class Order < ActiveRecord::Base
             where(deleted: false)
         }
 
+  scope :paid, -> {
+    where(state: '已支付')
+  }
+
+  scope :cash_on_delivery, -> {
+    where(payment_method_name: '货到付款') + where(payment_method_name: nil)
+  }
+
+  scope :online_payment, -> {
+    where(payment_method_name: '在线支付')
+  }
+
+  scope :bank_payment, -> {
+    where(payment_method_name: '银行汇款')
+  }
+
   def need_to_be_charged
     total_price.to_f + ship_fee.to_f
   end
