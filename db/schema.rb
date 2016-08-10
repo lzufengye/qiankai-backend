@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810012140) do
+ActiveRecord::Schema.define(version: 20160810013800) do
 
   create_table "activities", force: :cascade do |t|
     t.string   "title",      limit: 255
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20160810012140) do
     t.string   "link",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "rank",       limit: 4,   default: 0, null: false
   end
 
   create_table "articles", force: :cascade do |t|

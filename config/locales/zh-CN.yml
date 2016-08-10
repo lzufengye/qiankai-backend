@@ -138,6 +138,9 @@ zh-CN:
       advertisement:
         title: "标题"
         link: "链接"
+        rank: "显示顺序"
+        created_at: "创建时间"
+        updated_at: "更新时间"
       job:
         title: "标题"
         text: "内容"

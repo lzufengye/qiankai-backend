@@ -7,6 +7,7 @@
 #  link       :string(255)
 #  created_at :datetime
 #  updated_at :datetime
+#  rank       :integer
 #
 
 class Advertisement < ActiveRecord::Base
