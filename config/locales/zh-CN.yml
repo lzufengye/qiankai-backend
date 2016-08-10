@@ -95,7 +95,7 @@ zh-CN:
         ship_fee: "运费"
         created_at: "创建时间"
         updated_at: "更新时间"
-        line_items: "购买详情"
+        line_items: "购买商品"
         logistical: "物流公司"
         deleted: "已取消"
         consumer: "消费者"
