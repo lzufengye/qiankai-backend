@@ -44,6 +44,7 @@ zh-CN:
       customer: "入驻商家"
       tourism_tag: "旅游标签"
       tourism: "旅游景点"
+      hotel: "酒店"
       virtual_tourism: "虚拟旅游"
       consumer: "用户"
       order: "订单"
@@ -202,6 +203,12 @@ zh-CN:
         phone: "电话"
         description: "简介"
         content: "内容"
+        created_at: "创建时间"
+        updated_at: "更新时间"
+      hotel:
+        name: "名称"
+        phone: "电话"
+        description: "简介"
         created_at: "创建时间"
         updated_at: "更新时间"
       product:
