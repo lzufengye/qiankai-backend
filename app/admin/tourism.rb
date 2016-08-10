@@ -1,14 +1,19 @@
 ActiveAdmin.register Tourism do
   menu parent:'旅游'
-  permit_params :title, :description, :content, tourism_tag_ids: [],
+  permit_params :title, :description, :phone, :content, tourism_tag_ids: [],
                 attachments_attributes: [:id, :image, :_destroy]
 
   index do
     selectable_column
     id_column
     column :title
-    column :description
-    column :content
+    column :phone
+    column :description do |tourism|
+      truncate(tourism.description)
+    end
+    column :content do |tourism|
+      truncate(tourism.content)
+    end
     column :created_at
     actions
   end
@@ -20,6 +25,7 @@ ActiveAdmin.register Tourism do
   form do |f|
     f.inputs '景点详情' do
       f.input :title
+      f.input :phone
       f.input :description
       f.input :content, as: :rich, config: { width: '76%', height: '400px' }
       f.inputs '图片' do

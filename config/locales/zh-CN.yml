@@ -199,6 +199,7 @@ zh-CN:
         updated_at: "更新时间"
       tourism:
         title: "标题"
+        phone: "电话"
         description: "简介"
         content: "内容"
         created_at: "创建时间"
