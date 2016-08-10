@@ -172,11 +172,11 @@ ActiveAdmin.register_page "Dashboard" do
       end
 
     end
-  end # content
 
-  controller do
-    before_filter -> do
-      @user_data = "Hello"
+    columns do
+      column do
+        text_node %{<script> ActiveAdmin['dashboard']['index']() </script>}.html_safe
+      end
     end
-  end
+  end # content
 end

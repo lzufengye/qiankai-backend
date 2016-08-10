@@ -3,8 +3,6 @@ ActiveAdmin = {
 }
 
 ActiveAdmin.dashboard.index = function () {
-  console.log('test');
-
   $('#users').highcharts({
     chart: {
       type: 'line'
