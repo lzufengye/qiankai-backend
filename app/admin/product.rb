@@ -1,7 +1,7 @@
 ActiveAdmin.register Product do
   menu parent:'开街商城'
 
-  permit_params :cash_on_delivery, :sold_number, :display_order, :stock_number, :name, :image_url, :description, :free_ship, :price, :unit, :link, :on_sale, :product_detail, :customer_id, :service, tag_ids: [],
+  permit_params :cash_on_delivery, :archive, :sold_number, :display_order, :stock_number, :name, :image_url, :description, :free_ship, :price, :unit, :link, :on_sale, :product_detail, :customer_id, :service, tag_ids: [],
                 product_images_attributes: [:id, :image, :_destroy], product_details_attributes: [:id, :image, :_destroy],
                 services_attributes: [:id, :image, :_destroy], skus_attributes: [:id, :name, :price]
 
@@ -10,8 +10,12 @@ ActiveAdmin.register Product do
   index do
     selectable_column
     id_column
-    column :name
-    column :description
+    column :name do |product|
+      truncate(product.name)
+    end
+    column :description do |product|
+      truncate(product.description)
+    end
     column :price
     column :unit
     column :free_ship
@@ -35,6 +39,7 @@ ActiveAdmin.register Product do
   filter :sold_number
   filter :display_order
   filter :cash_on_delivery
+  filter :archive
   filter :created_at
 
   form do |f|
@@ -55,6 +60,7 @@ ActiveAdmin.register Product do
         f.input :display_order
       end
       f.input :cash_on_delivery, as: :select, collection: [ ['仅支持货到付款', '仅支持货到付款'], ['支持货到付款', '支持货到付款'], ['不支持货到付款', '不支持货到付款'] ]
+      f.input :archive
 
       f.inputs '标签' do
         TagCategory.all.each do |tag_category|
@@ -91,6 +97,16 @@ ActiveAdmin.register Product do
 
     end
     f.actions
+  end
+
+  controller do
+    def scoped_collection
+      if params['controller'] == 'admin/products' && params['action'] == 'index'
+        params['q'] && params['q']['archive_eq'] ? super.includes(:tags, :product_details) : super.includes(:tags, :product_details).where(archive: false)
+      else
+        super.includes(:tags, :product_details)
+      end
+    end
   end
 
 end

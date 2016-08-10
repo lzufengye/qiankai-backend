@@ -27,6 +27,7 @@
 #  display_order               :integer          default(0), not null
 #  cash_on_delivery            :string(255)      default("支持货到付款"), not null
 #  sold_number                 :integer          default(0), not null
+#  archive                     :boolean          default(FALSE), not null
 #
 
 FactoryGirl.define do

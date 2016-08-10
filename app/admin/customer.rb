@@ -6,7 +6,9 @@ ActiveAdmin.register Customer do
     selectable_column
     id_column
     column :name
-    column :description
+    column :description do |customer|
+      truncate(customer.description)
+    end
     column :phone
     column :admin_users do |customer|
       customer.admin_users.map(&:name).join(', ')
