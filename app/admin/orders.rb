@@ -95,7 +95,6 @@ ActiveAdmin.register Order do
   filter :sn
   filter :handle_state
   filter :products
-  filter :customers
   filter :customer
 
   sidebar :export do

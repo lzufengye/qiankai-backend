@@ -92,6 +92,7 @@ zh-CN:
         products: "包含商品"
         customers: "所属商家"
         customer_id: "所属商家"
+        customer: "所属商家"
         ship_fee: "运费"
         created_at: "创建时间"
         updated_at: "更新时间"
