@@ -1,7 +1,7 @@
 class Api::V1::ProductsController < ApiController
 
   def index
-    products = Tag.find_by_display(params['tag']) ? Tag.find_by_display(params['tag']).products.where(on_sale: true, archive: false) : []
+    products = Tag.find_by_display(params['tag']) ? Tag.find_by_display(params['tag']).products.includes(:customer).includes(:product_images).where(on_sale: true, archive: false) : []
     products = products.to_a.sort_by{|product| product.display_order}.reverse
     @products = paginate products, per_page: params[:limit] || 10
   end

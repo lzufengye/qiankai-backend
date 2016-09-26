@@ -35,4 +35,13 @@ json.products @products do |product|
   json.sold_number product.sold_number
   json.display_order product.display_order
   json.cash_on_delivery product.cash_on_delivery
+  json.customer do
+    if product.customer
+      json.id product.customer.id
+      json.name product.customer.name
+      json.phone product.customer.phone
+    else
+      json.name "开县春秋农业开发有限公司"
+    end
+  end
 end

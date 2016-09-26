@@ -20,9 +20,9 @@ json.product do
     if @product.customer
       json.id @product.customer.id
       json.name @product.customer.name
+      json.phone @product.customer.phone
     else
       json.name "开县春秋农业开发有限公司"
-      json.telephone "023-12343223"
     end
   end
   json.product_details @product.product_details.map(&:url)
