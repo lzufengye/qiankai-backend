@@ -48,6 +48,7 @@ zh-CN:
       virtual_tourism: "虚拟旅游"
       consumer: "用户"
       order: "订单"
+      customer_order: "商户销售明细"
       line_item: "订单项"
       address: "配送地址"
       shipment_fee: "运费管理"
