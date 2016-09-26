@@ -168,6 +168,7 @@ zh-CN:
       customer:
         name: "名称"
         phone: "电话"
+        qq_number: "QQ号码"
         description: "描述"
         admin_user:
           name: "姓名"

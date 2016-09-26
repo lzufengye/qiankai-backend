@@ -21,6 +21,7 @@ json.product do
       json.id @product.customer.id
       json.name @product.customer.name
       json.phone @product.customer.phone
+      json.qq @product.customer.qq_number
     else
       json.name "开县春秋农业开发有限公司"
     end

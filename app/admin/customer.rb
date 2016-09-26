@@ -1,6 +1,6 @@
 ActiveAdmin.register Customer do
   menu parent:'开街商城'
-  permit_params :name, :description, :phone, admin_users_attributes: [:id, :name, :email, :password, :password_confirmation, :_destroy], attachments_attributes: [:id, :image, :_destroy]
+  permit_params :name, :description, :qq_number, :phone, admin_users_attributes: [:id, :name, :email, :password, :password_confirmation, :_destroy], attachments_attributes: [:id, :image, :_destroy]
 
   index do
     selectable_column
@@ -20,6 +20,7 @@ ActiveAdmin.register Customer do
   filter :description
   filter :name
   filter :phone
+  filter :qq_number
   filter :created_at
 
   show do
@@ -27,6 +28,7 @@ ActiveAdmin.register Customer do
       row :name
       row :description
       row :phone
+      row :qq_number
     end
 
     panel('商户管理员') do
@@ -50,6 +52,7 @@ ActiveAdmin.register Customer do
     f.inputs '商户详情' do
       f.input :name
       f.input :phone
+      f.input :qq_number
       f.input :description
 
       f.inputs '商户管理员' do
