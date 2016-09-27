@@ -35,6 +35,8 @@ class Consumer < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  validates_uniqueness_of :phone, if: lambda{ |object| object.phone.present? }
+
   has_many :orders
   has_many :addresses
 end

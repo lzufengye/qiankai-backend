@@ -267,6 +267,8 @@ zh-CN:
           attributes:
             email:
               taken: "该邮箱已注册"
+            phone:
+              taken: "该电话已注册"
             password:
               too_short: "为了安全，请输入足够长的密码"
   views:
