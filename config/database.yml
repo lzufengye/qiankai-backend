@@ -8,6 +8,7 @@ default: &default
   adapter: mysql2
   encoding: utf8
   username: root
+  pool: 5
   password: <%= ENV['MYSQL_PASSWORD'] %>
   socket: /tmp/mysql.sock
 
