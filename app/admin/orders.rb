@@ -117,7 +117,7 @@ ActiveAdmin.register Order do
 
     orders.each do |order|
       order_detail = order.line_items.map do |line_item|
-         "#{line_item.try(:product).try(:name)} X #{line_item.quantity}"
+         "#{line_item.try(:product).try(:name)}(#{line_item.try(:sku).try(:name)}) X #{line_item.quantity}"
       end.reduce('+')
 
       customers = order.line_items.map do |line_item|
