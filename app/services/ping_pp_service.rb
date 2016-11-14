@@ -1,10 +1,12 @@
 class PingPPService
   def self.create_payment(order, client_ip, channel, success_url=nil)
+    charge_body = (order.line_items.map { |line_item| line_item.product.name }).to_json
+
     Pingpp::Charge.create(
         order_no: order.sn,
         amount: (order.total_price + order.ship_fee) * 100,
         subject: '开街网订单',
-        body: (order.line_items.map { |line_item| line_item.product.name }).to_json,
+        body: charge_body.length < 128 ? charge_body : '多件开街网商品',
         channel: channel,
         currency: 'cny',
         client_ip: client_ip,
