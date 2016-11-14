@@ -107,7 +107,7 @@ ActiveAdmin.register Order do
     order_list = Spreadsheet::Workbook.new
     sheet = order_list.create_worksheet name: 'Sheet-1'
 
-    header = ['订单号', '购买物品', '商家', '消费者', '顾客姓名', '联系电话', '收货地址', '支付方式', '支付状态', '处理状态', '总价', '运费', '备注', '创建时间']
+    header = ['订单号', '订单日期', '客户', '收货人', '收货人电话', '收货地址', '运费', '订单状态', '处理状态', '商品名称', '品相', '商家', '商品单价', '商品数量', '金额']
 
     sheet.insert_row(0, header)
 
@@ -116,19 +116,18 @@ ActiveAdmin.register Order do
     orders = orders.where(customer_id: current_admin_user.customer_id) unless current_admin_user.admin?
 
     orders.each do |order|
-      order_detail = order.line_items.map do |line_item|
-         "#{line_item.try(:product).try(:name)}(#{line_item.try(:sku).try(:name)}) X #{line_item.quantity}"
-      end.reduce('+')
-
-      customers = order.line_items.map do |line_item|
-        "#{line_item.try(:product).try(:customer).try(:name)} - #{line_item.try(:product).try(:customer).try(:phone)}"
-      end.uniq.reduce('+')
-
       consumer = order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?
 
-      new_row_index = sheet.last_row_index + 1
-      row = [order.sn, order_detail, customers,  consumer, order.address.try(:receiver), order.address.try(:phone), order.address.try(:receiver_address_detail), order.payment_method.try(:name), order.state, order.handle_state, order.total_price, order.ship_fee, order.comment, order.created_at]
-      sheet.insert_row(new_row_index, row)
+      order.line_items.each_with_index do |line_item, index|
+        product_name = line_item.try(:product).try(:name)
+        product_price = line_item.unit_price
+        product_quantity = line_item.quantity
+        sku_name = line_item.try(:sku).try(:name)
+        customer = "#{line_item.try(:product).try(:customer).try(:name)} - #{line_item.try(:product).try(:customer).try(:phone)}"
+        new_row_index = sheet.last_row_index + 1
+        row = [order.sn, order.created_at.strftime('%Y-%m-%d'), consumer, order.address.try(:receiver), order.address.try(:phone), order.address.try(:receiver_address_detail), index == 0 ? order.ship_fee : '', order.state, order.handle_state, product_name, sku_name, customer, product_price, product_quantity, index == 0 ? order.total_price : '']
+        sheet.insert_row(new_row_index, row)
+      end
     end
 
     spreadsheet = StringIO.new
