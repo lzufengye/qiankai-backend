@@ -107,17 +107,18 @@ ActiveAdmin.register Order do
     order_list = Spreadsheet::Workbook.new
     sheet = order_list.create_worksheet name: 'Sheet-1'
 
-    header = ['订单号', '购买物品', '商家', '消费者', '顾客姓名', '联系电话', '收货地址', '支付方式', '支付状态', '处理状态', '总价', '运费', '备注', '创建时间']
+    header = ['序号', '订单日期', '订单号', '购买物品', '商家', '顾客姓名', '联系电话', '收货地址', '商品价格', '运费', '支付方式', '处理状态', '发票抬头', '备注信息']
 
-    sheet.insert_row(0, header)
+    sheet.insert_row(0, ['', '', '', '', '', '', '开街网订单处理详细信息表', '', '', '', '', '', '', ''])
+    sheet.insert_row(1, header)
 
     orders = filter.result.includes(:address).includes(:consumer).includes(:payment_method).includes(:line_items).includes(:products).includes(:customers).where(deleted: false).order('created_at DESC')
 
     orders = orders.where(customer_id: current_admin_user.customer_id) unless current_admin_user.admin?
 
-    orders.each do |order|
+    orders.each_with_index do |order, index|
       order_detail = order.line_items.map do |line_item|
-         "#{line_item.try(:product).try(:name)}(#{line_item.try(:sku).try(:name)}) X #{line_item.quantity}"
+         "#{line_item.try(:product).try(:name)}[#{line_item.try(:sku).try(:name)}] X #{line_item.quantity}, "
       end.reduce('+')
 
       customers = order.line_items.map do |line_item|
@@ -127,7 +128,7 @@ ActiveAdmin.register Order do
       consumer = order.consumer.openid ? "微信用户：#{order.consumer.nickname}" : order.consumer.email if order.consumer.present?
 
       new_row_index = sheet.last_row_index + 1
-      row = [order.sn, order_detail, customers,  consumer, order.address.try(:receiver), order.address.try(:phone), order.address.try(:receiver_address_detail), order.payment_method.try(:name), order.state, order.handle_state, order.total_price, order.ship_fee, order.comment, order.created_at]
+      row = [index + 1, order.created_at.strftime('%m/%d/%Y'), order.sn, order_detail, customers, order.address.try(:receiver), order.address.try(:phone), order.address.try(:receiver_address_detail), order.total_price, order.ship_fee, order.payment_method.try(:name), order.handle_state, order.invoice_title, order.comment]
       sheet.insert_row(new_row_index, row)
     end
 
