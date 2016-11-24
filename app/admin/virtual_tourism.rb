@@ -35,7 +35,7 @@ ActiveAdmin.register VirtualTourism do
       f.input :title
       f.input :description
       f.input :video_url
-      f.input :thumb_nail, as: :file, hint: (f.image_tag(f.object.thumb_nail.url(:small)) if f.object.thumb_nail.exists? unless f.object.new_record?)
+      f.input :thumb_nail, as: :file, hint: (f.image_tag(f.object.thumb_nail.url) if f.object.thumb_nail.exists? unless f.object.new_record?)
       # f.input :video, as: :file, hint: (f.image_tag(f.object.video_thumb) if f.object.video.exists? unless f.object.new_record?)
     end
     f.actions

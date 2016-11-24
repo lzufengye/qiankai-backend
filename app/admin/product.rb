@@ -74,17 +74,17 @@ ActiveAdmin.register Product do
       end
       f.inputs '图片' do
         f.has_many :product_images, heading: false, allow_destroy: true do |a|
-          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url(:small)) if a.object.image.exists? unless a.object.new_record?)
+          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url) if a.object.image.exists? unless a.object.new_record?)
         end
       end
       f.inputs '商品详情' do
         f.has_many :product_details, heading: false, allow_destroy: true do |a|
-          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url(:small)) if a.object.image.exists? unless a.object.new_record?)
+          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url) if a.object.image.exists? unless a.object.new_record?)
         end
       end
       f.inputs '售后服务' do
         f.has_many :services, heading: false, allow_destroy: true do |a|
-          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url(:small)) if a.object.image.exists? unless a.object.new_record?)
+          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url) if a.object.image.exists? unless a.object.new_record?)
         end
       end
 

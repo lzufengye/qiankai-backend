@@ -42,7 +42,7 @@ ActiveAdmin.register Customer do
     panel('图片') do
       table_for(customer.attachments) do
         column :image do |attachment|
-          image_tag attachment.image.url(:small)
+          image_tag attachment.image.url
         end
       end
     end

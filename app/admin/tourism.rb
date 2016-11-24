@@ -30,7 +30,7 @@ ActiveAdmin.register Tourism do
       f.input :content, as: :rich, config: { width: '76%', height: '400px' }
       f.inputs '图片' do
         f.has_many :attachments, heading: false, allow_destroy: true do |a|
-          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url(:small)) if a.object.image.exists? unless a.object.new_record?)
+          a.input :image, as: :file, hint: (a.template.image_tag(a.object.image.url) if a.object.image.exists? unless a.object.new_record?)
         end
       end
       f.input :tourism_tags, as: :check_boxes, collection: TourismTag.all
