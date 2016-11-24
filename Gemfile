@@ -41,6 +41,7 @@ gem 'spreadsheet'
 gem 'faker'
 gem 'api-pagination'
 gem 'highcharts-rails'
+gem 'posix-spawn'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
