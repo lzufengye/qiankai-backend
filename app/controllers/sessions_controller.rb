@@ -9,19 +9,17 @@ class SessionsController < Devise::SessionsController
 
     self.resource = warden.authenticate(auth_options)
     unless (resource)
-          return render :json => {
-                     :message => '请输入正确的用户名或密码',
-                     :status => 401
-                 }
-      end
+      return render json: {
+          message: '请输入正确的用户名或密码',
+          status: 401
+      }
+    end
     sign_in(resource_name, resource)
 
-    current_consumer.update authentication_token: nil
-
-        render :json => {
-                   :consumer => current_consumer,
-                   :status => :ok
-               }
+    render json: {
+        consumer: current_consumer,
+        status: :ok
+    }
   end
 
   # DELETE /resource/sign_out
